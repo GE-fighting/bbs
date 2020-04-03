@@ -1,0 +1,153 @@
+/*登录页面自定义样式*/
+.bgbody {
+    background: #eee !important;
+}
+
+.form-signin {
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.pass-forgot {
+    width: 100%;
+    float: left;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.4);
+    font-size: 14px;
+}
+
+/*注册页面的自定义样式*/
+.reg-form {
+    margin-top: 80px;
+}
+
+#avatar-img {
+    height: 60px;
+    width: 60px;
+}
+
+/*博客主页面样式*/
+.article-footer {
+    margin-top: 10px;
+}
+
+.article-footer span {
+    margin-right: 15px;
+}
+
+.author-img {
+    height: 80px;
+    width: 80px;
+}
+
+/*.media {*/
+/*    background-color: #fff;*/
+/*    border: 1px solid rgba(0, 0, 0, 0.1);*/
+/*}*/
+
+
+/*个人博客主页样式*/
+.header {
+    height: 50px;
+    width: 100%;
+    background: #1b6d85;
+    color: #0f0f0f;
+    font-size: 18px;
+}
+
+
+/*文章详情页样式*/
+#div_digg {
+    float: right;
+    margin-bottom: 10px;
+    margin-right: 30px;
+    font-size: 12px;
+    width: 125px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.diggit {
+    float: left;
+    width: 46px;
+    height: 52px;
+    background: url(/static/image/upup.gif) no-repeat;
+    text-align: center;
+    cursor: pointer;
+    margin-top: 2px;
+    padding-top: 5px;
+}
+
+.buryit {
+    float: right;
+    margin-left: 20px;
+    width: 46px;
+    height: 52px;
+    background: url(/static/image/downdown.gif) no-repeat;
+    text-align: center;
+    cursor: pointer;
+    margin-top: 2px;
+    padding-top: 5px;
+}
+
+.errorText {
+    color: red;
+}
+
+.successText {
+    color: #1b6d85;
+}
+
+.diggword {
+    margin-top: 5px;
+    margin-left: 0;
+    font-size: 12px;
+    color: #808080;
+}
+
+.clear {
+    clear: both;
+}
+
+#commentform_title {
+    background-image: url(/static/image/icon_addcomment.gif);
+    background-repeat: no-repeat;
+    padding: 0 0 10px 25px;
+    margin: 10px 0 30px;
+    border-bottom: 2px solid #ccc;
+}
+
+input.author {
+    background-position: 3px -3px;
+}
+
+input.author, input.email, input.url {
+    background-image: url(/static/image/icon_form.gif);
+    background-repeat: no-repeat;
+    border: 1px solid #ccc;
+    padding: 4px 4px 4px 30px;
+    width: 300px;
+    font-size: 13px;
+}
+
+.commentbox_title {
+    width: 450px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.commentbox_title_right {
+    height: 22px;
+}
+
+textarea.comment_textarea {
+    line-height: 1.6;
+}
+
+textarea {
+    width: 450px;
+    height: 250px;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    font-family: 'PingFang SC', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+}

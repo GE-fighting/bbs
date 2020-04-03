@@ -1,0 +1,22 @@
+{% extends "backend/backendbase.html" %}
+{% block page-main %}
+    <div id="page-wrapper">
+    <div id="page-inner">
+        <div class="row">
+            <div class="col-md-offset-2 col-md-8">
+                <div class="panel panel-success">
+                    <div class="panel-heading" style="padding-bottom: 20px">
+                        <h2><span class="glyphicon glyphicon-ok">保存成功</span></h2>
+                    </div>
+                    <div class="panel-body" style="background-color: #f2dede">
+                        <p><span class="glyphicon glyphicon-send">&nbsp;文章标题:&nbsp;</span><a
+                                href="/blog/{{ request.user.username }}/article/{{ article.nid }}/">{{ article.title }}</a>
+                        </p>
+                        <p>秀</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册页面</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!--移动端适配-->
+    <link href="https://cdn.bootcss.com/normalize/8.0.1/normalize.min.css" rel="stylesheet"><!--统一浏览器格式-->
+    <link rel="stylesheet" href="/static/bootstrap-3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/mystyle.css">
+    <link href="https://cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.css" rel="stylesheet">
+</head>
+<body class="bgbody">
+<div class="container">
+    <div class="row">
+        <div class="col-md-offset-3 col-md-6 reg-form">
+            <div class="panel panel-success">
+                <div class="panel-heading"><h3 class="text-center">请注册</h3></div>
+                <div class="panel-body">
+                    <form class="form-horizontal" novalidate>
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="id-username"
+                                   class="col-md-2 control-label">{{ form_obj.username.label }}</label>
+                            <div class="col-md-8">
+                                {{ form_obj.username }}
+                                <span class="help-block">{{ form_obj.username.errors.0 }}</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="id-password"
+                                   class="col-md-2 control-label">{{ form_obj.password.label }}</label>
+                            <div class="col-md-8">
+                                {{ form_obj.password }}
+                                <span class="help-block">{{ form_obj.password.errors.0 }}</span>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="id-re_passsword"
+                                   class="col-md-2 control-label">{{ form_obj.re_password.label }}</label>
+                            <div class="col-md-8">
+                                {{ form_obj.re_password }}
+                                <span class="help-block">{{ form_obj.re_password.errors.0 }}</span>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="id-email" class="col-md-2 control-label">{{ form_obj.email.label }}</label>
+                            <div class="col-md-8">
+                                {{ form_obj.email }}
+                                <span class="help-block">{{ form_obj.email.errors.0 }}</span>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="id-pbone" class="col-md-2 control-label">{{ form_obj.phone.label }}</label>
+                            <div class="col-md-6">
+                                {{ form_obj.phone }}
+                                <span class="help-block">{{ form_obj.phone.errors.0 }}</span>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-default" id="send_code" type="button">发送验证码</button>
+                            </div>
+                        </div>
+                         <div class="form-group">
+                            <label for="id-code" class="col-md-2 control-label">{{ form_obj.code.label }}</label>
+                            <div class="col-md-6">
+                                {{ form_obj.code }}
+                                <span class="help-block">{{ form_obj.code.errors.0 }}</span>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="username" class="col-md-2 control-label">上传头像</label>
+                            <div class="col-md-8">
+                                <label for="id-avatar"><img id="avatar-img" src="/static/image/default.jpg"></label>
+                                <input accept="image/*" type="file" id="id-avatar" name="up-file" style="display: none">
+                                <span class="help-block"></span>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-3 col-md-6">
+                                <button type="button" class="btn btn-success btn-block" id="reg-submit">立即注册</button>
+                            </div>
+                        </div>
+                        <p class="pass-forgot"><span class="glyphicon glyphicon-arrow-left"></span><a href="/login/"
+                                                                                                      class="blue">Sign
+                            in now&nbsp;</a>Is a member?</p>
+                    </form>
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="/static/jquery-3.4.1.min.js"></script>
+<script src="/static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.js"></script>
+<script src="/static/countdown.js"></script>
+<script>
+    //注册页面显示头像功能
+    //找到input标签，绑定change事件
+    $("#id-avatar").change(function () {
+        //创建一个读取文件对象
+        var fileReader = new FileReader();
+        //取到当前的头像文件
+        var filePath = $(this)[0].files[0];
+        fileReader.readAsDataURL(filePath);//读是要有时间
+        //等上一步把文件读完很之后，把图片加载到img标签中
+        fileReader.onload = function () {
+            $("#avatar-img").attr("src", fileReader.result);
+        }
+    })
+
+    //发送验证码按钮点击事件
+    $("#send_code").click(function () {
+        var thisEle = this;
+        var phone = $("#id-phone").val();
+        var result = /^1[35678]\d{9}$/.test(phone);
+        if (result) {
+            $.ajax({
+                url: "/sendCode/",
+                type: "get",
+                data:{"phone":phone},
+                success: function (data) {
+                    if (data.code !== 0) {
+                        swal({
+                            title: "",
+                            text: data.data,
+                            type: "error",
+                            showConfirmButton: true
+                        })
+                    }
+                    else {
+                        countdown(thisEle);
+                    }
+                }
+            })
+        } else {
+            swal({
+                title: "",
+                text: "手机格式错误",
+                type: "error",
+                showConfirmButton: true
+            })
+        }
+    })
+    //AJAX提交数据
+    $("#reg-submit").on("click", function () {
+        var formData = new FormData();
+        formData.append("username", $("#id-username").val());
+        formData.append("password", $("#id-password").val());
+        formData.append("re_password", $("#id-re_password").val());
+        formData.append("email", $("#id-email").val());
+        formData.append("phone", $("#id-phone").val());
+        formData.append("code", $("#id-code").val());
+        formData.append("avatar", $("#id-avatar")[0].files[0]);
+        formData.append("csrfmiddlewaretoken", $("[name='csrfmiddlewaretoken']").val());
+        $.ajax({
+            url: "/reg/",
+            type: "post",
+            processData: false,//告诉jQuery不要处理我的数据
+            contentType: false,//告诉jQuery不要设置content类型
+            data: formData,
+            success: function (data) {
+                if (data.status) { //有错误就展示错误
+                    //将报错信息填到页面上
+                    $.each(data.msg, function (k, v) {
+                        $("#id-" + k).next("span").text(v[0]).parent().parent().addClass("has-error");
+                    })
+                } else {
+                    //没有错误就跳转到指定页面
+                    swal({
+                        title: "",
+                        text: "注册成功，正在跳转进入博客园",
+                        type: "success",
+                        timer: 2000,
+                        showConfirmButton: false
+                    }, function () {
+                        location.href = data.msg;
+                    })
+
+                }
+            }
+        })
+    })
+
+
+    //所有input框获得焦点事件，错误信息清空
+    $("form input").focus(function () {
+        $(this).next().text("").parent().parent().removeClass("has-error");
+    })
+
+</script>
+</body>
+</html>

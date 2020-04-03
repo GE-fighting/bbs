@@ -1,0 +1,91 @@
+﻿{% extends "backend/backendbase.html" %}
+{% block page-main %}
+
+    <div id="page-wrapper">
+        <div id="page-inner">
+            <div class="row">
+                <div class="col-md-10 col-sm-10 col-md-offset-1">
+                    <div class="panel panel-default">
+                        <div class="page-header"><h3>添加文章</h3></div>
+                        <div class="panel-body">
+                            <form method="post" id="form" action="/blog/backend/add_article/" onsubmit="return validateForm()">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label class="control-label">文章标题</label>
+                                    <input class="form-control" name="title">
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">文章内容</label>
+                                    <textarea id="editor_id" class="form-control" name="content" cols="80"
+                                              rows="20"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <div class="panel panel-info">
+                                        <div class="panel-heading">个人分类</div>
+                                        <div class="panel-body">
+                                            {% for category in category_list %}
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="category" id="{{ category.nid }}"
+                                                           value="{{ category.nid }}">{{ category.title }}
+                                                </label>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="panel panel-info">
+                                        <div class="panel-heading">个人标签（可多选）</div>
+                                        <div class="panel-body">
+                                            {% for tag in tag_list %}
+                                                <label class="checkbox-inline">
+                                                    <input type="checkbox" name="tag" id="{{ tag.nid }}"
+                                                           value="{{ tag.nid }}">{{ tag.title }}
+                                                </label>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" class="btn btn-default btn-lg" value="提交"/>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /. PAGE INNER  -->
+        </div>
+        <!-- /. PAGE WRAPPER  -->
+    </div>
+
+
+
+    <script charset="utf-8" src="/static/kindeditor/kindeditor-all.js"></script>
+    <script charset="utf-8" src="/static/kindeditor/lang/zh-CN.js"></script>
+    <script>
+        function validateForm() {
+            var title = $("input[name='title']").val();
+            var content = $("input[name='content']").val();
+            if (title === "" || content === "") {
+                swal({
+                    title:"",
+                    text:"标题或内容不能为空",
+                    type:"warning",
+                    showConfirmButton:true,
+                })
+                return false;
+            }
+        }
+
+        KindEditor.ready(function (K) {
+            window.editor = K.create('#editor_id', {
+                uploadJson: '/upload/',
+                extraFileUploadParams: {
+                    csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
+                },
+                filePostName: "uploadImg"
+            });
+        });
+    </script>
+{% endblock %}
