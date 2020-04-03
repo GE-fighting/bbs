@@ -1,0 +1,13 @@
+beautifulsoup4==4.8.2
+certifi==2017.7.27.1
+chardet==3.0.4
+Django==1.8
+django-redis==4.0.0
+geetest==3.2.1
+idna==2.6
+PyMySQL==0.9.3
+pytz==2017.3
+redis==3.4.1
+requests==2.18.4
+soupsieve==2.0
+urllib3==1.22
