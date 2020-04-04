@@ -72,7 +72,7 @@
                 <div class="panel-heading">推荐文章排行</div>
                 <div class="panel-body">
                     {% for article in article_top %}
-                        <p>{{ forloop.counter }}、{{ article.title }}</p>
+                        <p>{{ forloop.counter }}、{{ article.title }}{{ article.user.username }}</p>
                     {% endfor %}
                 </div>
             </div>
