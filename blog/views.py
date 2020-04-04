@@ -223,7 +223,7 @@ def logout(request):
 def home(request, username):
     user = models.UserInfo.objects.filter(username=username).first()
     if not user:
-        return HttpResponse("404")
+        return render(request,"404.html")
     blog = user.blog
     print("从主页面走")
     # 我的文章列表
@@ -250,7 +250,7 @@ def home(request, username):
 def home_category(request, username, category_title):
     user = models.UserInfo.objects.filter(username=username).first()
     if not user:
-        return HttpResponse("404")
+        return render(request, "404.html")
     blog = user.blog
     category = models.Category.objects.filter(blog=blog, title=category_title)
     article_list = models.Article.objects.filter(user=user, category=category)
@@ -270,7 +270,7 @@ def home_category(request, username, category_title):
 def home_tag(request, username, tag_title):
     user = models.UserInfo.objects.filter(username=username).first()
     if not user:
-        return HttpResponse("404")
+        return render(request,"404.html")
     blog = user.blog
     tag = models.Tag.objects.filter(blog=blog, title=tag_title)
     articletotag_list = list(models.ArticleToTag.objects.filter(tag=tag))
@@ -293,7 +293,7 @@ def home_tag(request, username, tag_title):
 def home_archive(request, username, time):
     user = models.UserInfo.objects.filter(username=username).first()
     if not user:
-        return HttpResponse("404")
+        return render(request,"404.html")
     blog = user.blog
     article_default_list = list(models.Article.objects.filter(user=user))
     article_list = []
@@ -340,7 +340,7 @@ def article_detail(request, username, pk):
     '''
     user = models.UserInfo.objects.filter(username=username).first()
     if not user:
-        return HttpResponse("404")
+        return render(request,"404.html")
     blog = user.blog
     article_obj = models.Article.objects.filter(pk=pk).first()  # 用first()装换成Article对象，不然是Query set 对象
     category_list, archive_list, tag_list = get_left_menu(username)
