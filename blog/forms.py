@@ -65,7 +65,6 @@ class RegForm(forms.Form):
     def clean_username(self):
         username = self.cleaned_data.get("username")
         test_str = re.search(r"\W",username)
-        print(test_str)
         is_exist = models.UserInfo.objects.filter(username=username)
         if test_str!=None:
             self.add_error("username", ValidationError("用户名格式错误！,不能包含特殊字符"))
