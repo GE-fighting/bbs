@@ -29,7 +29,7 @@
             <ul class="nav navbar-nav">
                 {% if request.user.username %}
                     <li><a href="javascript:void(0);"><span id="blog">个人博客</span></a></li>
-                      <li><a href="/blog/backend/blog_manage/">后台管理</a></li>
+                    <li><a href="/blog/backend/blog_manage/">后台管理</a></li>
                 {% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
@@ -72,7 +72,7 @@
                 <div class="panel-heading">推荐文章排行</div>
                 <div class="panel-body">
                     {% for article in article_top %}
-                        <p>{{ forloop.counter }}、{{ article.title }}{{ article.user.username }}</p>
+                        <p><a href="/blog/{{ article.user.username }}/article/{{ article.pk }}/">{{ forloop.counter }}、{{ article.title }}</a></p>
                     {% endfor %}
                 </div>
             </div>
