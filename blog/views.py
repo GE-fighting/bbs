@@ -20,7 +20,7 @@ def sendCode(request):
     params = {'message': '您的验证码为:' + strCode, 'number': phone}
     result = client.send(params)
     saveCode(phone, strCode)
-    result = {"code": 0}
+    print(result)
     return JsonResponse(result, safe=False)
 
 
