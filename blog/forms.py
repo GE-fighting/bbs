@@ -64,11 +64,11 @@ class RegForm(forms.Form):
     # 重写username字段的局部钩子
     def clean_username(self):
         username = self.cleaned_data.get("username")
-        test_str = re.search(r"\W",username)
-        is_exist = models.UserInfo.objects.filter(username=username)
-        if test_str!=None:
+        test_str = re.search(r"\W",username)   #正则表达式查看用户名内是否有非单词字符（特殊字符）
+        is_exist = models.UserInfo.objects.filter(username=username)  #查看该用户名数据库里是否有
+        if test_str!=None:  #用户名有特殊字符，报错，返回报错信息
             self.add_error("username", ValidationError("用户名格式错误！,不能包含特殊字符"))
-        elif is_exist:
+        elif is_exist:  #用户名已存在，报错，返回错误信息
             self.add_error("username", ValidationError("该用户已存在！"))
         else:  # 不传返回值服务器会报错
             return username
