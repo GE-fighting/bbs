@@ -57,15 +57,19 @@ class RegForm(forms.Form):
         label="验证码",
         widget=forms.widgets.TextInput(attrs={'class': 'form-control', "id": "id-code"}),
         error_messages={
-            "required": "手机码不能为空"
+            "required": "验证码不能为空"
         }
     )
 
     # 重写username字段的局部钩子
     def clean_username(self):
         username = self.cleaned_data.get("username")
+        test_str = re.search(r"\W",username)
+        print(test_str)
         is_exist = models.UserInfo.objects.filter(username=username)
-        if is_exist:
+        if test_str!=None:
+            self.add_error("username", ValidationError("用户名格式错误！,不能包含特殊字符"))
+        elif is_exist:
             self.add_error("username", ValidationError("该用户已存在！"))
         else:  # 不传返回值服务器会报错
             return username
