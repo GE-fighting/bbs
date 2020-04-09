@@ -229,13 +229,7 @@ def home(request, username):
     # 我的文章列表
     article_list = models.Article.objects.filter(user=user)
     #     # 我的文章分类和分类下的文章数
-    category_list = models.Category.objects.filter(blog=blog)  # 我的文章分类
-    # 我的文章标签和标签下的文章数，与上面的文章分类方法不同，但原理类似
-    tag_list = models.Tag.objects.filter(blog=blog).annotate(c=Count("article")).values("title", "c")
-    # 按日期归档
-    archive_list = models.Article.objects.filter(user=user).extra(
-        select={"archive_ym": "date_format(create_time,'%%Y-%%m')"}
-    ).values("archive_ym").annotate(c=Count("nid")).values("archive_ym", "c")
+    category_list, archive_list, tag_list, concerned_users = get_left_menu(username)
     return render(request, "home.html", {
         "blog": blog,
         "username": username,
@@ -243,6 +237,7 @@ def home(request, username):
         "category_list": category_list,
         "archive_list": archive_list,
         "tag_list": tag_list,
+        "concerned_users":concerned_users
     })
 
 
@@ -255,7 +250,7 @@ def home_category(request, username, category_title):
     category = models.Category.objects.filter(blog=blog, title=category_title)
     article_list = models.Article.objects.filter(user=user, category=category)
     print(article_list)
-    category_list, archive_list, tag_list = get_left_menu(username)
+    category_list, archive_list, tag_list,concerned_users = get_left_menu(username)
     return render(request, "home.html", {
         "blog": blog,
         "username": username,
@@ -263,6 +258,7 @@ def home_category(request, username, category_title):
         "category_list": category_list,
         "archive_list": archive_list,
         "tag_list": tag_list,
+        "concerned_users":concerned_users
     })
 
 
@@ -277,8 +273,7 @@ def home_tag(request, username, tag_title):
     article_list = []
     for articletotag in articletotag_list:
         article_list.append(articletotag.article)
-    print(article_list)
-    category_list, archive_list, tag_list = get_left_menu(username)
+    category_list, archive_list, tag_list,concerned_users = get_left_menu(username)
     return render(request, "home.html", {
         "blog": blog,
         "username": username,
@@ -286,6 +281,7 @@ def home_tag(request, username, tag_title):
         "category_list": category_list,
         "archive_list": archive_list,
         "tag_list": tag_list,
+        "concerned_users":concerned_users
     })
 
 
@@ -300,8 +296,7 @@ def home_archive(request, username, time):
     for article in article_default_list:
         if article.create_time.strftime("%Y-%m") == time:
             article_list.append(article)
-    print(article_list)
-    category_list, archive_list, tag_list = get_left_menu(username)
+    category_list, archive_list, tag_list,concerned_users = get_left_menu(username)
     return render(request, "home.html", {
         "blog": blog,
         "username": username,
@@ -309,6 +304,7 @@ def home_archive(request, username, time):
         "category_list": category_list,
         "archive_list": archive_list,
         "tag_list": tag_list,
+        "concerned_users":concerned_users
     })
 
 
@@ -327,7 +323,9 @@ def get_left_menu(username):
     archive_list = models.Article.objects.filter(user=user).extra(
         select={"archive_ym": "date_format(create_time,'%%Y-%%m')"}
     ).values("archive_ym").annotate(c=Count("nid")).values("archive_ym", "c")
-    return category_list, archive_list, tag_list
+    #关注的人
+    concerned_users = models.UserConcern.objects.filter(concern=user)
+    return category_list, archive_list, tag_list,concerned_users
 
 
 # 获取文章内容的视图函数

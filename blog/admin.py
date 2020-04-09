@@ -10,5 +10,6 @@ admin.site.register(models.ArticleToTag)
 admin.site.register(models.ArticleDetail)
 admin.site.register(models.ArticleUpDown)
 admin.site.register(models.Comments)
+admin.site.register(models.UserConcern)
 
 

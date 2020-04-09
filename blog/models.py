@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
+# 用户信息表
 class UserInfo(AbstractUser):
     nid = models.AutoField(primary_key=True)
     phone = models.CharField(max_length=11, null=True, unique=True)
@@ -19,6 +20,22 @@ class UserInfo(AbstractUser):
         verbose_name_plural = verbose_name
 
 
+# 用户关注表
+class UserConcern(models.Model):
+    nid = models.AutoField(primary_key=True)  # 主键字段
+    concerned = models.ForeignKey(to="UserInfo", to_field="nid", related_name="concerned_user")  # 被关注者
+    concern = models.ForeignKey(to="UserInfo", to_field="nid", related_name="concern_user")  # 关注者
+
+    def __str__(self):
+        return self.concerned.username + "<---" + self.concern.username
+
+    class Meta:
+        unique_together = (("concerned", "concern"),)  # 联合主键
+        verbose_name = "用户关注"
+        verbose_name_plural = verbose_name
+
+
+# 博客信息表
 class Blog(models.Model):
     '''
     博客信息
@@ -117,7 +134,7 @@ class ArticleUpDown(models.Model):
     is_up = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = (("article", "user"),) #联合主键
+        unique_together = (("article", "user"),)  # 联合主键
         verbose_name = "文章点赞"
         verbose_name_plural = verbose_name
 

@@ -31,7 +31,7 @@ urlpatterns = [
     url(r'(\w+)/category/(\w+)/$', views.home_category),
     url(r'(\w+)/tag/(.+)/$', views.home_tag),  # home_tag(request,username.tag_title)
     url(r'(\w+)/archive/(.+)/$', views.home_archive),  # home_tag(request,username.tag_title)
-    url(r'(\w+)/', views.home),  # home(request,username)
+    url(r'(\w+)/', views.home),  # home(request,username)进入个人站点
 
     ########个人站点############
 ]

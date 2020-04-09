@@ -98,6 +98,14 @@
         </div>
         <div class="col-md-3 pull-right" id="blog-right">
             <div class="panel panel-default">
+                <div class="panel-body">
+                    <img  src="/media/{{ request.user.avatar }}"/>
+                    <p><span>昵称：</span><span>{{ request.user.username }}</span></p>
+                    <p><span>关注：</span><span>{{ concerned_users.count}}</span></p>
+                </div>
+
+            </div>
+            <div class="panel panel-default">
                 <div class="panel-heading">文章分类</div>
                 <div class="panel-body">
                     {#得到文章分类和分类下的文章数#}
