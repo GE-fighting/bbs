@@ -132,7 +132,7 @@
 
         //删除按钮点击事件
         $("table").on("click", ".del", function () {
-            id = $(this).attr("id")
+            id = $(this).attr("id");
             var trEle = $(this).parent().parent();
             $.ajax({
                 url: "/blog/backend/delTag/",

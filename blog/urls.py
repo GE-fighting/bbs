@@ -5,6 +5,13 @@ urlpatterns = [
     url(r"up_down/", views.up_down),
     url(r'comment/', views.comment),
 
+    # ------------关注功能------------#
+    url(r'addConcern/', views.addConcern),  # 添加关注用户
+    url(r'cancelConcern/', views.cancelConcern),  # 添加关注用户
+    # ------------!关注功能------------#
+
+
+
     ###########文章管理url################
     url(r'backend/add_article/', views.add_article),
     url(r'backend/article_list/', views.article_list),
@@ -32,6 +39,6 @@ urlpatterns = [
     url(r'(\w+)/tag/(.+)/$', views.home_tag),  # home_tag(request,username.tag_title)
     url(r'(\w+)/archive/(.+)/$', views.home_archive),  # home_tag(request,username.tag_title)
     url(r'(\w+)/', views.home),  # home(request,username)进入个人站点
-
     ########个人站点############
+
 ]

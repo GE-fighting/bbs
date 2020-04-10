@@ -6,7 +6,7 @@ from geetest import GeetestLib
 from django.db.models import Count
 
 from untils import zhenzismsclient as smsclient
-from untils.testRedis import saveCode,record_up,get_top_n_articles
+from untils.testRedis import saveCode, record_up, get_top_n_articles
 import random
 
 
@@ -16,7 +16,7 @@ def sendCode(request):
     for i in range(0, 6):
         strCode = strCode + str(random.randint(0, 9))
     client = smsclient.ZhenziSmsClient("https://sms_developer.zhenzikj.com", "105034",
-                                           "2a6ef5e2-aa69-408a-b03d-be9ca79e8010")
+                                       "2a6ef5e2-aa69-408a-b03d-be9ca79e8010")
     params = {'message': '您的验证码为:' + strCode, 'number': phone}
     result = client.send(params)
     saveCode(phone, strCode)
@@ -29,6 +29,7 @@ def sendCode(request):
 # 自定义分页（Bootstrap版）
 class Pagination(object):
     """自定义分页（Bootstrap版）"""
+
     def __init__(self, current_page, total_count, base_url, per_page=5, max_show=11):
         """
         :param current_page: 当前请求的页码
@@ -162,7 +163,8 @@ def get_geetest(request):
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-#主页面视图函数
+
+# 主页面视图函数
 def index(request):
     # 从URL中取当前访问的页码数
     # current_page = int(request.GET.get('page'))
@@ -178,7 +180,7 @@ def index(request):
     top10 = get_top_n_articles(10)
     print("-------------------------------------")
     print(top10)
-    return render(request, "index.html", {"article_list": data, "article_top":top10,"page_html": page_html})
+    return render(request, "index.html", {"article_list": data, "article_top": top10, "page_html": page_html})
 
 
 # 注册的视图函数
@@ -223,21 +225,22 @@ def logout(request):
 def home(request, username):
     user = models.UserInfo.objects.filter(username=username).first()
     if not user:
-        return render(request,"404.html")
+        return render(request, "404.html")
     blog = user.blog
     print("从主页面走")
     # 我的文章列表
     article_list = models.Article.objects.filter(user=user)
     #     # 我的文章分类和分类下的文章数
-    category_list, archive_list, tag_list, concerned_users = get_left_menu(username)
+    category_list, archive_list, tag_list, concerned_users, is_concerned = get_left_menu(username, request)
     return render(request, "home.html", {
         "blog": blog,
-        "username": username,
+        "user": user,
         "article_list": article_list,
         "category_list": category_list,
         "archive_list": archive_list,
         "tag_list": tag_list,
-        "concerned_users":concerned_users
+        "concerned_users": concerned_users,
+        "is_concerned": is_concerned
     })
 
 
@@ -250,15 +253,16 @@ def home_category(request, username, category_title):
     category = models.Category.objects.filter(blog=blog, title=category_title)
     article_list = models.Article.objects.filter(user=user, category=category)
     print(article_list)
-    category_list, archive_list, tag_list,concerned_users = get_left_menu(username)
+    category_list, archive_list, tag_list, concerned_users, is_concerned = get_left_menu(username, request)
     return render(request, "home.html", {
         "blog": blog,
-        "username": username,
+        "user": user,
         "article_list": article_list,
         "category_list": category_list,
         "archive_list": archive_list,
         "tag_list": tag_list,
-        "concerned_users":concerned_users
+        "concerned_users": concerned_users,
+        "is_concerned": is_concerned
     })
 
 
@@ -266,22 +270,23 @@ def home_category(request, username, category_title):
 def home_tag(request, username, tag_title):
     user = models.UserInfo.objects.filter(username=username).first()
     if not user:
-        return render(request,"404.html")
+        return render(request, "404.html")
     blog = user.blog
     tag = models.Tag.objects.filter(blog=blog, title=tag_title)
     articletotag_list = list(models.ArticleToTag.objects.filter(tag=tag))
     article_list = []
     for articletotag in articletotag_list:
         article_list.append(articletotag.article)
-    category_list, archive_list, tag_list,concerned_users = get_left_menu(username)
+    category_list, archive_list, tag_list, concerned_users, is_concerned = get_left_menu(username, request)
     return render(request, "home.html", {
         "blog": blog,
-        "username": username,
+        "user": user,
         "article_list": article_list,
         "category_list": category_list,
         "archive_list": archive_list,
         "tag_list": tag_list,
-        "concerned_users":concerned_users
+        "concerned_users": concerned_users,
+        "is_concerned": is_concerned
     })
 
 
@@ -289,29 +294,30 @@ def home_tag(request, username, tag_title):
 def home_archive(request, username, time):
     user = models.UserInfo.objects.filter(username=username).first()
     if not user:
-        return render(request,"404.html")
+        return render(request, "404.html")
     blog = user.blog
     article_default_list = list(models.Article.objects.filter(user=user))
     article_list = []
     for article in article_default_list:
         if article.create_time.strftime("%Y-%m") == time:
             article_list.append(article)
-    category_list, archive_list, tag_list,concerned_users = get_left_menu(username)
+    category_list, archive_list, tag_list, concerned_users, is_concerned = get_left_menu(username, request)
     return render(request, "home.html", {
         "blog": blog,
-        "username": username,
+        "user": user,
         "article_list": article_list,
         "category_list": category_list,
         "archive_list": archive_list,
         "tag_list": tag_list,
-        "concerned_users":concerned_users
+        "concerned_users": concerned_users,
+        "is_concerned": is_concerned
     })
 
 
 # ----------------!个人博客站点视图函数------------------#
 
 # 获得左侧视图菜单数据的视图函数
-def get_left_menu(username):
+def get_left_menu(username, request):
     user = models.UserInfo.objects.filter(username=username).first()
     blog = user.blog
     # 我的文章分类和分类下的文章数
@@ -323,9 +329,20 @@ def get_left_menu(username):
     archive_list = models.Article.objects.filter(user=user).extra(
         select={"archive_ym": "date_format(create_time,'%%Y-%%m')"}
     ).values("archive_ym").annotate(c=Count("nid")).values("archive_ym", "c")
-    #关注的人
-    concerned_users = models.UserConcern.objects.filter(concern=user)
-    return category_list, archive_list, tag_list,concerned_users
+    # 关注的人
+    concerned_users = models.UserConcern.objects.filter(concern=user)  # 访问用户所关注的人
+    concerned_self = models.UserConcern.objects.filter(concern=request.user)
+    list_concerned = []
+    for user_concern in concerned_self:
+        list_concerned.append(user_concern.concerned.nid)
+    is_concerned = ""
+    if user.nid in list_concerned:  # 该用户在我的关注列表里，则标志值为1
+        is_concerned = 1
+    else:  # 该用户不在我的关注列表里，则标志值为0
+        is_concerned = 0
+    if request.user == user:  # 浏览到我的博哥站点，则标志值为2
+        is_concerned = 2
+    return category_list, archive_list, tag_list, concerned_users, is_concerned
 
 
 # 获取文章内容的视图函数
@@ -338,21 +355,23 @@ def article_detail(request, username, pk):
     '''
     user = models.UserInfo.objects.filter(username=username).first()
     if not user:
-        return render(request,"404.html")
+        return render(request, "404.html")
     blog = user.blog
     article_obj = models.Article.objects.filter(pk=pk).first()  # 用first()装换成Article对象，不然是Query set 对象
-    category_list, archive_list, tag_list = get_left_menu(username)
+    category_list, archive_list, tag_list, concerned_users, is_concerned = get_left_menu(username, request)
     comment_list = models.Comments.objects.filter(article_id=pk)
     print(comment_list)
     return render(request,
                   'article_detail.html',
                   {"article": article_obj,
                    "blog": blog,
-                   "username": username,
+                   "user": user,
                    "category_list": category_list,
                    "archive_list": archive_list,
                    "tag_list": tag_list,
-                   "comment_list": comment_list
+                   "comment_list": comment_list,
+                   "concerned_users": concerned_users,
+                   "is_concerned": is_concerned
                    })
 
 
@@ -363,26 +382,23 @@ from django.db.models import F
 # 点赞功能视图函数
 def up_down(request):
     ret = {"status": True, "msg_is_up": ""}  # 返回给ajax的字典
-    is_up = json.loads(request.POST.get("is_up"))#把Js语法的boolen值转化为pyhon的boolen值
-    article_id = request.POST.get("article_id")#获取前台传的文章id值
-    user = request.user    #获取用户对象
+    is_up = json.loads(request.POST.get("is_up"))  # 把Js语法的boolen值转化为pyhon的boolen值
+    article_id = request.POST.get("article_id")  # 获取前台传的文章id值
+    user = request.user  # 获取用户对象
     try:
-        models.ArticleUpDown.objects.create(user=user, article_id=article_id, is_up=is_up)#尝试在文章点赞表里添加一条记录
-        if is_up:   #如果是点赞，则让该文章点赞数加一
+        models.ArticleUpDown.objects.create(user=user, article_id=article_id, is_up=is_up)  # 尝试在文章点赞表里添加一条记录
+        if is_up:  # 如果是点赞，则让该文章点赞数加一
             record_up(article_id, 5)
             print("redis错误")
             models.Article.objects.filter(pk=article_id).update(up_count=F("up_count") + 1)
-             #在redis增加该篇文章的点赞数
-        else:       #如果是踩，则让文章踩数加一
+            # 在redis增加该篇文章的点赞数
+        else:  # 如果是踩，则让文章踩数加一
             models.Article.objects.filter(pk=article_id).update(down_count=F("down_count") + 1)
-    except Exception as e:#如果在文章添加表里创建记录失败，则查看该用户对该片文章已有的点赞情况
+    except Exception as e:  # 如果在文章添加表里创建记录失败，则查看该用户对该片文章已有的点赞情况
         msg_is_up = models.ArticleUpDown.objects.filter(user=user, article_id=article_id).first().is_up
-        ret["status"] = False #将创建记录（点赞或踩是否成功）设为false,及不成功
-        ret["msg_is_up"] = msg_is_up #将该用户对该文章的态度赋值，便于在前端查看
-    return JsonResponse(ret)                #返回状态集
-
-
-
+        ret["status"] = False  # 将创建记录（点赞或踩是否成功）设为false,及不成功
+        ret["msg_is_up"] = msg_is_up  # 将该用户对该文章的态度赋值，便于在前端查看
+    return JsonResponse(ret)  # 返回状态集
 
 
 # 获取评论列表视图函数
@@ -454,7 +470,7 @@ def article_delete(request):
     article_id = request.GET.get("id")
     try:
         models.Article.objects.filter(pk=article_id).delete()
-        models.ArticleUpDown.objects.filter(article_id=article_id).delete() #在文章点赞表里查找该文章记录，全部删除
+        models.ArticleUpDown.objects.filter(article_id=article_id).delete()  # 在文章点赞表里查找该文章记录，全部删除
     except Exception as e:
         ret["status"] = 0
     return JsonResponse(ret)
@@ -590,11 +606,36 @@ def editTag(request):
 # ---------------------！标签管理视图函数------------------------#
 
 
-#----------------------用户中心管理视图-------------------------#
+# ------------------------关注管理视图----------------------------#
+def addConcern(request):
+    ret = {"status": 1}
+    concerned_id = request.GET.get("id")
+    concern_user = request.user
+    try:
+        models.UserConcern.objects.create(concerned_id=concerned_id, concern=concern_user)
+    except Exception as e:
+        print(e)
+        ret["status"] = 0
+    return JsonResponse(ret)
+
+def cancelConcern(request):
+    ret = {"status": 1}
+    cancel_concern_id = request.GET.get("id")
+    cancel_concern_user = request.user
+    try:
+        models.UserConcern.objects.filter(concerned_id=cancel_concern_id,concern=cancel_concern_user).delete()
+    except Exception as e:
+        print(e)
+        ret["status"] = 0
+    return JsonResponse(ret)
+
+# ------------------------！关注管理视图----------------------------#
 
 
+# ----------------------用户中心管理视图-------------------------#
 
-#----------------------！用户中心管理视图-------------------------#
+
+# ----------------------！用户中心管理视图-------------------------#
 
 from bbs import settings
 import os

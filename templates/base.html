@@ -70,13 +70,13 @@
 <canvas></canvas>
 <div id="blog-header">
     <div id="blogTitle">
-        <h1><a href="/blog/{{ username }}/">{{ blog.title }}</a></h1>
+        <h1><a href="/blog/{{ user.username }}/">{{ blog.title }}</a></h1>
     </div>
 </div>
 <div class="mynav">
     <ul class="nav nav-pills pull-right">
         <li role="presentation"><a href="/index/">博客园</a></li>
-        <li role="presentation"><a href="/blog/{{ username }}/">首页</a></li>
+        <li role="presentation"><a href="/blog/{{ user.username }}/">首页</a></li>
         <li role="presentation"><a href="/blog/backend/add_article/">新文章</a></li>
         <li role="presentation"><a href="#">联系我们</a></li>
         <li role="presentation"><a href="/blog/backend/article_list/">管理</a></li>
@@ -99,9 +99,23 @@
         <div class="col-md-3 pull-right" id="blog-right">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <img  src="/media/{{ request.user.avatar }}"/>
-                    <p><span>昵称：</span><span>{{ request.user.username }}</span></p>
-                    <p><span>关注：</span><span>{{ concerned_users.count}}</span></p>
+                    <div class="alert alert-default">
+                        <strong>公告</strong>
+                    </div>
+                    <hr>
+                    <div>
+                        <img class="img-responsive center-block img-circle" src="/media/{{ user.avatar }}"
+                             style="height: 80px;width: 80px"/>
+                        <hr>
+                    </div>
+                    <p><span>昵称：</span><span>{{ user.username }}</span></p>
+                    <p><span>关注：</span><a data-toggle="modal"
+                                          data-target="#myModal_concern"><span id="concern_num">{{ concerned_users.count }}</span></a>
+                    </p>
+                    <p>
+                        <button class="btn btn-danger hide" id="cancel_concern">取消关注</button>
+                        <button class="btn btn-default hide" id="concern">关注</button>
+                    </p>
                 </div>
 
             </div>
@@ -111,7 +125,7 @@
                     {#得到文章分类和分类下的文章数#}
                     {% for categroy in category_list %}
                         <p><span><a
-                                href="/blog/{{ username }}/category/{{ categroy.title }}/">{{ categroy.title }}({{ categroy.article_set.all.count }})</a></span>
+                                href="/blog/{{ user.username }}/category/{{ categroy.title }}/">{{ categroy.title }}({{ categroy.article_set.all.count }})</a></span>
                         </p>
                     {% endfor %}
                 </div>
@@ -121,7 +135,9 @@
                 <div class="panel-body">
                     {#得到文章分类和分类下的文章数#}
                     {% for tag in tag_list %}
-                        <p><span><a  href="/blog/{{ username }}/tag/{{ tag.title }}/">{{ tag.title }}({{ tag.c }})</a></span></p>
+                        <p><span><a
+                                href="/blog/{{ user.username }}/tag/{{ tag.title }}/">{{ tag.title }}({{ tag.c }})</a></span>
+                        </p>
                     {% endfor %}
                 </div>
             </div>
@@ -130,7 +146,9 @@
                 <div class="panel-body">
                     {#得到文章分类和分类下的文章数#}
                     {% for a in archive_list %}
-                        <p><span><a href="/blog/{{ username }}/archive/{{ a.archive_ym }}/">{{ a.archive_ym }}({{ a.c }})</a></span></p>
+                        <p><span><a
+                                href="/blog/{{ user.username }}/archive/{{ a.archive_ym }}/">{{ a.archive_ym }}({{ a.c }})</a></span>
+                        </p>
                     {% endfor %}
                 </div>
             </div>
@@ -139,8 +157,116 @@
 
 </div>
 
-
+<div class="modal fade" id="myModal_concern" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    {% if request.user == user %}
+                        您的关注
+                    {% else %}
+                        TA的关注
+                    {% endif %}
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    {% for concerned in concerned_users %}
+                        <div class="media">
+                            <div class="media-left">
+                                <a href="/blog/{{ concerned.concerned.username }}/">
+                                    <img class="media-object img-circle" style="height: 80px;width: 80px"
+                                         src="/media/{{ concerned.concerned.avatar }}" alt="...">
+                                </a>
+                            </div>
+                            <div class="media-body">
+                                <a href="/blog/{{ concerned.concerned.username }}/">  <h4 class="media-heading">{{ concerned.concerned.username }}</h4></a>
+                                博客介绍：{{ concerned.concerned.blog.title }}
+                            </div>
+                            {% if request.user == user %}
+                                <div class="media-right">
+                                    <button class="btn btn-danger cancel_concern" id="{{ concerned.concerned.nid }}">
+                                        取消关注
+                                    </button>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script src="/static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+<script>
+    if ("{{ is_concerned }}" === "1") {
+        $("#cancel_concern").removeClass("hide");
+    }
+    if ("{{ is_concerned }}" === "0") {
+        $("#concern").removeClass("hide");
+    }
+    $("#concern").click(function () {
+        var concerned_id = "{{ user.nid }}"
+        $.ajax({
+            url: "/blog/addConcern/",
+            type: "GET",
+            data: {"id": concerned_id},
+            success: function (data) {
+                if (data.status) {
+                    alert("关注成功");
+                    $("#concern").addClass("hide");
+                    $("#cancel_concern").removeClass("hide");
+                } else {
+                    alert("关注失败")
+                }
+
+            }
+        })
+    })
+    $("#cancel_concern").click(function () {
+        var concerned_id = "{{ user.nid }}";
+        $.ajax({
+            url: "/blog/cancelConcern/",
+            type: "GET",
+            data: {"id": concerned_id},
+            success: function (data) {
+                if (data.status) {
+                    alert("取消关注成功");
+                    $("#concern").removeClass("hide");
+                    $("#cancel_concern").addClass("hide");
+                } else {
+                    alert("取消关注失败")
+                }
+
+            }
+        })
+    })
+    $("#myModal_concern").on("click", ".cancel_concern", function () {
+        var cancel_concerned_id = $(this).attr("id");
+        var elem = $(this).parent().parent();
+        $.ajax({
+            url: "/blog/cancelConcern/",
+            type: "GET",
+            data: {"id": cancel_concerned_id},
+            success: function (data) {
+                if (data.status) {
+                    alert("取消关注成功");
+                    elem.remove();
+                    var num =$("#concern_num").text();
+                    $("#concern_num").text(num-1)
+                } else {
+                    alert("取消关注失败")
+                }
+
+            }
+        })
+    })
+</script>
 <script>
     var canvas, ctx, width, height, stems, bubbles;
 
