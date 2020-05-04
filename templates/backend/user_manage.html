@@ -77,18 +77,21 @@
                                         {% csrf_token %}
                                     <div class="form-group">
                                         <label class="control-label">旧的密码</label>
-                                        <input class="form-control" id="oldpwd">
+                                        <input type="password" class="form-control" id="oldpwd">
+                                        <span class="help-block"></span>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label">新的密码</label>
-                                        <input class="form-control" id="oldpwd">
+                                        <input type="password" class="form-control" id="newpwd">
+                                        <span class="help-block"></span>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label">再次输入</label>
-                                        <input class="form-control" id="oldpwd">
+                                        <input type="password" class="form-control" id="newpwd_1">
+                                        <span class="help-block"></span>
                                     </div>
                                     <div>
-                                        <button id="submit" class="btn btn-default">提交</button>
+                                        <button id="pwd_submit" class="btn btn-default">提交</button>
                                     </div>
                                     </p>
                                 </div>
@@ -120,9 +123,55 @@
                     "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val()
                 },
                 success: function (data) {
-                    console.log(data)
+                    if (!data.status) {
+                        swal({
+                            title: "",
+                            text: data.msg,
+                            type: "success",
+                            showConfirmButton: false,
+                            timer: 1000
+                        })
+                        $("div[id='profile']").text(new_profile);
+                        $("#edit_modal").modal("hide");
+                    } else {
+                        swal({
+                            title: "",
+                            text: data.msg,
+                            type: "error",
+                            showConfirmButton: true
+                        })
+                    }
                 }
             })
+
+        })
+
+        {#修改密码点击事件#}
+        $("#pwd_submit").click(function () {
+            var oldpwd = $("#oldpwd").val();
+            var newpwd = $("#newpwd").val();
+            var newpwd_1 = $("#newpwd_1").val();
+            if (oldpwd.length < 6) {
+                $("#oldpwd").next().text("密码不得少于6位");
+                $("#oldpwd").parent().addClass("has-error");
+                return false;
+            }
+            if (newpwd.length < 6) {
+                $("#newpwd").next().text("密码不得少于6位");
+                $("#newpwd").parent().addClass("has-error");
+                return false;
+            }
+            if (oldpwd.length < 6) {
+                $("#newpwd_1").next().text("密码不得少于6位");
+                $("#newpwd_1").parent().addClass("has-error");
+                return false;
+            }
+            if (newpwd != newpwd_1) {
+                $("#newpwd_1").next().text("两次输入的密码不一致");
+                $("#newpwd_1").parent().addClass("has-error");
+                return false;
+            }
+
 
         })
 

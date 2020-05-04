@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from blog import views
+from blog import views,view_userManage
 
 urlpatterns = [
     url(r"up_down/", views.up_down),
@@ -11,8 +11,8 @@ urlpatterns = [
     # ------------!关注功能------------#
 
     # --------------个人中心管理-----------#
-    url(r'backend/userManager/edit_profile/', views.edit_userProfile),
-    url(r'backend/userManager/', views.userManager),
+    url(r'backend/userManager/edit_profile/', view_userManage.edit_userProfile),
+    url(r'backend/userManager/', view_userManage.userManager),
 
     # --------------！个人中心管理-----------#
 

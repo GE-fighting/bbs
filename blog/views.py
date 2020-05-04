@@ -638,27 +638,8 @@ def cancelConcern(request):
 # ------------------------！关注管理视图----------------------------#
 
 
-# ----------------------用户中心管理视图-------------------------#
-def userManager(request):
-    print("-------------------------------------")
-    return render(request,"backend/user_manage.html")
-
-def edit_userProfile(request):
-    ret = {"status": 0, "msg":"保存成功"}
-    user = request.user
-    new_profile = request.POST.get("new_profile")
-    try:
-        models.UserInfo.objects.filter(nid=user.pk).update(profile=new_profile)
-    except Exception as e:
-        print(e)
-        ret["status"]=1
-        ret["msg"]="保存失败"
-    return JsonResponse(ret)
-# ----------------------！用户中心管理视图-------------------------#
-
 from bbs import settings
 import os
-
 
 # 富本编辑器上传图片
 def upload(request):
