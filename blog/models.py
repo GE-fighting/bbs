@@ -8,6 +8,7 @@ from django.contrib.auth.models import AbstractUser
 class UserInfo(AbstractUser):
     nid = models.AutoField(primary_key=True)
     phone = models.CharField(max_length=11, null=True, unique=True)
+    profile = models.CharField(max_length=128,null=True)
     avatar = models.FileField(upload_to="avatars/", default="avatars/default.jpg", verbose_name="头像")
     create_time = models.DateTimeField(auto_now_add=True)
     blog = models.OneToOneField(to="Blog", to_field="nid", null=True)
@@ -44,6 +45,7 @@ class Blog(models.Model):
     title = models.CharField(max_length=64)  # 个人博客标题
     site = models.CharField(max_length=32, unique=True)  # 个人博客后缀
     theme = models.CharField(max_length=32)  # 博客主题
+    profile = models.CharField(max_length=128,null=True)
 
     def __str__(self):
         return self.title
@@ -52,7 +54,7 @@ class Blog(models.Model):
         verbose_name = "blog 站点"
         verbose_name_plural = verbose_name
 
-
+#文章分类表
 class Category(models.Model):
     nid = models.AutoField(primary_key=True)
     title = models.CharField(max_length=32)  # 分类标题
@@ -65,7 +67,7 @@ class Category(models.Model):
         verbose_name = "文章分类"
         verbose_name_plural = verbose_name
 
-
+#文章标签表
 class Tag(models.Model):
     nid = models.AutoField(primary_key=True)
     title = models.CharField(max_length=32)  # 标签名
@@ -78,7 +80,7 @@ class Tag(models.Model):
         verbose_name = "文章标签"
         verbose_name_plural = verbose_name
 
-
+#文章表
 class Article(models.Model):
     nid = models.AutoField(primary_key=True)
     title = models.CharField(max_length=50)  # 文章标题

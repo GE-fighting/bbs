@@ -11,18 +11,24 @@ import random
 
 
 def sendCode(request):
+    # 获取用户号码
     phone = request.GET.get("phone")
-    strCode = ""  ##生成6位随机验证码
+    #生成6位随机验证码
+    strCode = ""
     for i in range(0, 6):
         strCode = strCode + str(random.randint(0, 9))
+    #获取榛子云客户端
     client = smsclient.ZhenziSmsClient("https://sms_developer.zhenzikj.com", "105034",
                                        "2a6ef5e2-aa69-408a-b03d-be9ca79e8010")
+    #给客户端设置参数
     params = {'message': '您的验证码为:' + strCode, 'number': phone}
+    #客户端发送信息，得到返回结果
     result = client.send(params)
+    # 将号码和对应的验证码存到redis中，设置有效时间
     saveCode(phone, strCode)
     result = {"code": 0}
+    # 向前端返回结果数据
     return JsonResponse(result, safe=False)
-
 
 # Create your views here.
 
@@ -633,8 +639,8 @@ def cancelConcern(request):
 
 
 # ----------------------用户中心管理视图-------------------------#
-
-
+def userManager(request):
+    return render(request,"backend/user_manage.html")
 # ----------------------！用户中心管理视图-------------------------#
 
 from bbs import settings
