@@ -61,7 +61,7 @@
                                                         {% else %}
                                                             {{ request.user.profile }}
                                                         {% endif %}
-                                                    </div >
+                                                    </div>
                                                 </div>
                                                 <div class="media-footer">
                                                     <button class="btn btn-default pull-right" data-toggle="modal"
@@ -104,15 +104,27 @@
     </div>
     <script>
         {#修改用户个人简介#}
-    $("#edit_profile").click(function () {
-        var old_profile = $("div[id='profile']").text().trim();
-        $("textarea").text(old_profile);
-    })
+        $("#edit_profile").click(function () {
+            var old_profile = $("div[id='profile']").text().trim();
+            $("textarea").text(old_profile);
+        })
 
-    $("button[name='edit_submit']").click(function () {
-        var new_profile =  $("textarea").text();
+        $("button[name='edit_submit']").click(function () {
+            var new_profile = $("textarea").val();
+            console.log(new_profile);
+            $.ajax({
+                url: "/blog/backend/userManager/edit_profile/",
+                type: "POST",
+                data: {
+                    "new_profile": new_profile,
+                    "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val()
+                },
+                success: function (data) {
+                    console.log(data)
+                }
+            })
 
-    })
+        })
 
     </script>
 {% endblock %}

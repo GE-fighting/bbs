@@ -10,10 +10,11 @@ urlpatterns = [
     url(r'cancelConcern/', views.cancelConcern),  # 添加关注用户
     # ------------!关注功能------------#
 
-    #--------------个人中心管理-----------#
+    # --------------个人中心管理-----------#
+    url(r'backend/userManager/edit_profile/', views.edit_userProfile),
     url(r'backend/userManager/', views.userManager),
-    url(r'backend/userManager/edit_profile/', views.userManager),
-    #--------------！个人中心管理-----------#
+
+    # --------------！个人中心管理-----------#
 
     ###########文章管理url################
     url(r'backend/add_article/', views.add_article),
