@@ -109,6 +109,7 @@
                         <hr>
                     </div>
                     <p><span>昵称：</span><span>{{ user.username }}</span></p>
+                    <p><span>简介：</span><span>{{ user.profile }}</span></p>
                     <p><span>关注：</span><a data-toggle="modal"
                                           data-target="#myModal_concern"><span id="concern_num">{{ concerned_users.count }}</span></a>
                     </p>
@@ -183,7 +184,7 @@
                             </div>
                             <div class="media-body">
                                 <a href="/blog/{{ concerned.concerned.username }}/">  <h4 class="media-heading">{{ concerned.concerned.username }}</h4></a>
-                                博客介绍：{{ concerned.concerned.blog.title }}
+                                博客介绍：{{ concerned.concerned.profile }}
                             </div>
                             {% if request.user == user %}
                                 <div class="media-right">

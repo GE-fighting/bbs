@@ -171,7 +171,39 @@
                 $("#newpwd_1").parent().addClass("has-error");
                 return false;
             }
+            $.ajax({
+                url: "/blog/backend/userManager/edit_pwd/",
+                type: "POST",
+                data: {
+                    "old_pwd": oldpwd,
+                    "new_pwd": newpwd,
+                    "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val()
+                },
+                success: function (data) {
+                    if (!data.status) {
+                        swal({
+                                title: "",
+                                text: data.msg + "即将重新登录",
+                                type: "success",
+                                showConfirmButton: false,
+                                timer: 3000
+                            },
+                            function () {
+                                location.href = "/login/"
+                            }
+                        )
+                    } else {
+                        swal({
+                            title: "",
+                            text: data.msg,
+                            type: "error",
+                            showConfirmButton: true
+                        })
+                    }
+                }
 
+
+            })
 
         })
 

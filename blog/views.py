@@ -13,22 +13,23 @@ import random
 def sendCode(request):
     # 获取用户号码
     phone = request.GET.get("phone")
-    #生成6位随机验证码
+    # 生成6位随机验证码
     strCode = ""
     for i in range(0, 6):
         strCode = strCode + str(random.randint(0, 9))
-    #获取榛子云客户端
+    # 获取榛子云客户端
     client = smsclient.ZhenziSmsClient("https://sms_developer.zhenzikj.com", "105034",
                                        "2a6ef5e2-aa69-408a-b03d-be9ca79e8010")
-    #给客户端设置参数
+    # 给客户端设置参数
     params = {'message': '您的验证码为:' + strCode, 'number': phone}
-    #客户端发送信息，得到返回结果
+    # 客户端发送信息，得到返回结果
     result = client.send(params)
     # 将号码和对应的验证码存到redis中，设置有效时间
     saveCode(phone, strCode)
     result = {"code": 0}
     # 向前端返回结果数据
     return JsonResponse(result, safe=False)
+
 
 # Create your views here.
 
@@ -123,6 +124,7 @@ pc_geetest_key = "36fc3fe98530eea08dfc6ce76e3d24c4"
 
 # 登录视图函数
 def login(request):
+    # 如果是post方法
     if request.method == "POST":
         ret = {"status": 0, "msg": ""}  # 初始化一个给AJAX返回的数据
         username = request.POST.get("username")
@@ -142,6 +144,7 @@ def login(request):
             # 验证码正确
             # 利用auth模块做用户名和密码的校验
             user = auth.authenticate(username=username, password=password)
+            response = HttpResponse()
             if user:
                 auth.login(request, user)  # 将登陆用户注入request.user
                 ret["msg"] = "/index/"
@@ -153,6 +156,13 @@ def login(request):
             ret["status"] = 2
             ret["msg"] = "验证码错误"
         return JsonResponse(ret)
+    # 如果是get方法
+    else:
+        if 'login' in request.COOKIES:
+            login = request.get_signed_cookie('login', salt='hello').split(',')
+            username = login[0]
+            password = login[1]
+            return render(request, "login.html",{"username":username,"password":password})
     return render(request, "login.html")
 
 
@@ -624,22 +634,25 @@ def addConcern(request):
         ret["status"] = 0
     return JsonResponse(ret)
 
+
 def cancelConcern(request):
     ret = {"status": 1}
     cancel_concern_id = request.GET.get("id")
     cancel_concern_user = request.user
     try:
-        models.UserConcern.objects.filter(concerned_id=cancel_concern_id,concern=cancel_concern_user).delete()
+        models.UserConcern.objects.filter(concerned_id=cancel_concern_id, concern=cancel_concern_user).delete()
     except Exception as e:
         print(e)
         ret["status"] = 0
     return JsonResponse(ret)
+
 
 # ------------------------！关注管理视图----------------------------#
 
 
 from bbs import settings
 import os
+
 
 # 富本编辑器上传图片
 def upload(request):
