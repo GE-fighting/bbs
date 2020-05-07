@@ -348,17 +348,21 @@ def get_left_menu(username, request):
     ).values("archive_ym").annotate(c=Count("nid")).values("archive_ym", "c")
     # 关注的人
     concerned_users = models.UserConcern.objects.filter(concern=user)  # 访问用户所关注的人
-    concerned_self = models.UserConcern.objects.filter(concern=request.user)
-    list_concerned = []
-    for user_concern in concerned_self:
-        list_concerned.append(user_concern.concerned.nid)
-    is_concerned = ""
-    if user.nid in list_concerned:  # 该用户在我的关注列表里，则标志值为1
-        is_concerned = 1
-    else:  # 该用户不在我的关注列表里，则标志值为0
-        is_concerned = 0
-    if request.user == user:  # 浏览到我的博哥站点，则标志值为2
-        is_concerned = 2
+    is_concerned=-1  #对用户我是否关注进行判断
+    if request.user.username == "":
+        print("该用户未登录")
+    else:
+        concerned_self = models.UserConcern.objects.filter(concern_id=request.user.pk)  # 我关注的人
+        list_concerned = []
+        for user_concern in concerned_self:
+            list_concerned.append(user_concern.concerned.nid)
+        if user.nid in list_concerned:  # 该用户在我的关注列表里，则标志值为1
+            is_concerned = 1
+        else:  # 该用户不在我的关注列表里，则标志值为0
+            is_concerned = 0
+        if request.user == user:  # 浏览到我的博哥站点，则标志值为2
+            is_concerned = 2
+    print(is_concerned)
     return category_list, archive_list, tag_list, concerned_users, is_concerned
 
 
@@ -464,7 +468,7 @@ def add_article(request):
             models.ArticleDetail.objects.create(content=str(soup), article=article_obj)
             for tagId in tagId_list:
                 models.ArticleToTag.objects.create(article=article_obj, tag_id=tagId)
-            return render(request, "backend/article_success.html", {"msg":"文章成功创建","article": article_obj})
+            return render(request, "backend/article_success.html", {"msg": "文章成功创建", "article": article_obj})
         except Exception as e:
             return render(request, "backend/add_article.html", {"result": 0})
     return render(request, "backend/add_article.html", {"category_list": category_list, "tag_list": tag_list})
@@ -527,10 +531,10 @@ def article_edit(request):
             models.Article.objects.filter(nid=edit_article_id).update(title=title, desc=desc, category_id=category_id)
             models.ArticleDetail.objects.filter(article_id=edit_article_id).update(content=str(soup))
             models.ArticleToTag.objects.filter(article_id=edit_article_id).delete()
-            article_obj=models.Article.objects.filter(nid=edit_article_id).first()
+            article_obj = models.Article.objects.filter(nid=edit_article_id).first()
             for tagId in tagId_list:
                 models.ArticleToTag.objects.create(article_id=edit_article_id, tag_id=tagId)
-            return render(request, "backend/article_success.html", {"msg": "文章已成功修改","article": article_obj })
+            return render(request, "backend/article_success.html", {"msg": "文章已成功修改", "article": article_obj})
         except Exception as e:
             print(e)
             return HttpResponse("404")
