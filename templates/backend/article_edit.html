@@ -10,6 +10,7 @@
                         <div class="panel-body">
                             <form method="post" action="/blog/backend/article_edit/">
                                 {% csrf_token %}
+                                <input type="password" class="hidden" name="edit_article_id" value="{{ article_detail_obj.article.pk }}">
                                 <div class="form-group">
                                     <label class="control-label">文章标题</label>
                                     <input class="form-control" name="title"

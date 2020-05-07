@@ -494,13 +494,11 @@ def article_delete(request):
 
 
 def article_edit(request):
-    global edit_article_id
     if request.method == "GET":
         blog = request.user.blog
         category_list = models.Category.objects.filter(blog=blog)
         tag_list = models.Tag.objects.filter(blog=blog)
         id = request.GET.get("id")
-        edit_article_id = id
         category_id = models.Article.objects.filter(pk=id).first().category
         article_detail_obj = models.ArticleDetail.objects.filter(article_id=id).first()
         tagID_list = models.ArticleToTag.objects.filter(article_id=id).values("tag_id")
@@ -516,6 +514,7 @@ def article_edit(request):
                        "tagIDs": tagIDs}
                       )
     else:
+        edit_article_id=request.POST.get("edit_article_id")
         title = request.POST.get("title")
         content = request.POST.get("content")
         category_id = request.POST.get("category")  # get方法即可获取radio的值
