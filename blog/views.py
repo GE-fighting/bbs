@@ -524,13 +524,10 @@ def article_edit(request):
             if tag.name in ["script", "link"]:
                 tag.decompose()
         try:
-            print("--------------------")
             models.Article.objects.filter(nid=edit_article_id).update(title=title, desc=desc, category_id=category_id)
             models.ArticleDetail.objects.filter(article_id=edit_article_id).update(content=str(soup))
-            print("---------------------")
             models.ArticleToTag.objects.filter(article_id=edit_article_id).delete()
             article_obj=models.Article.objects.filter(nid=edit_article_id).first()
-            print(article_obj)
             for tagId in tagId_list:
                 models.ArticleToTag.objects.create(article_id=edit_article_id, tag_id=tagId)
             return render(request, "backend/article_success.html", {"msg": "文章已成功修改","article": article_obj })

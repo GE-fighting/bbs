@@ -1,9 +1,13 @@
 {% extends 'base.html' %}
 
 {% block page-main %}
-    <div>
-        <p>{{ article.title }}</p>
-        <p>{{ article.articledetail.content|safe }}</p>
+    <div class="panel panel-default">
+        <div class="alert alert-warning text-center">
+            <h3><strong>{{ article.title }}!</strong></h3>
+        </div>
+        <div class="panel-body">
+            {{ article.articledetail.content|safe }}
+        </div>
     </div>
 
     {#点赞区域#}
