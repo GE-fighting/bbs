@@ -121,7 +121,7 @@
     $("#send_code").click(function () {
         var thisEle = this;
         var phone = $("#id-phone").val();
-        var result = /^1[35678]\d{9}$/.test(phone);
+        var result = /^1[35678]\d{9}$/.test(phone);//正则表达式对用户输入的电话判断是否符合规范
         if (result) {
             $.ajax({
                 url: "/sendCode/",

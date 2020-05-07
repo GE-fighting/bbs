@@ -11,9 +11,10 @@ urlpatterns = [
     # ------------!关注功能------------#
 
     # --------------个人中心管理-----------#
-    url(r'backend/userManager/edit_profile/', view_userManage.edit_userProfile),
-    url(r'backend/userManager/rem_user/', view_userManage.rem_user),
-    url(r'backend/userManager/edit_pwd/', view_userManage.edit_pwd),#修改密码
+    url(r'backend/userManager/edit_profile/', view_userManage.edit_userProfile),#用户修改简介
+    url(r'backend/userManager/rem_user/', view_userManage.rem_user),#用户保存七天密码
+    url(r'backend/userManager/edit_pwd/', view_userManage.edit_pwd),#修改用户密码
+    url(r'backend/userManager/found_pwd/', view_userManage.found_pwd),#用户找回密码
     url(r'backend/userManager/', view_userManage.userManager),#跳转到个人中心页面
 
     # --------------！个人中心管理-----------#

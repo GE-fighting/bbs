@@ -21,9 +21,10 @@ def sendCode(request):
     client = smsclient.ZhenziSmsClient("https://sms_developer.zhenzikj.com", "105034",
                                        "2a6ef5e2-aa69-408a-b03d-be9ca79e8010")
     # 给客户端设置参数
+    print(strCode)
     params = {'message': '您的验证码为:' + strCode, 'number': phone}
     # 客户端发送信息，得到返回结果
-    result = client.send(params)
+    # result = client.send(params)
     # 将号码和对应的验证码存到redis中，设置有效时间
     saveCode(phone, strCode)
     result = {"code": 0}

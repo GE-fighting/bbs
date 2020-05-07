@@ -95,12 +95,11 @@ class RegForm(forms.Form):
             self.add_error("phone", ValidationError("手机号格式错误"))
         else:  # 不传返回值服务器会报错
             return phone
-
+    # 对验证码进行判断，查看是否一致
     def clean_code(self):
         code = self.cleaned_data.get("code")
         phone = self.cleaned_data.get("phone")
         codeKey = "phone:" + phone
-        print(codeKey)
         if getCode(codeKey) != code:
             self.add_error("code", ValidationError("验证码错误"))
         else:
