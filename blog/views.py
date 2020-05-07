@@ -24,7 +24,7 @@ def sendCode(request):
     print(strCode)
     params = {'message': '您的验证码为:' + strCode, 'number': phone}
     # 客户端发送信息，得到返回结果
-    # result = client.send(params)
+    result = client.send(params)
     # 将号码和对应的验证码存到redis中，设置有效时间
     saveCode(phone, strCode)
     result = {"code": 0}
@@ -163,7 +163,7 @@ def login(request):
             login = request.get_signed_cookie('login', salt='hello').split(',')
             username = login[0]
             password = login[1]
-            return render(request, "login.html",{"username":username,"password":password})
+            return render(request, "login.html", {"username": username, "password": password})
     return render(request, "login.html")
 
 
@@ -450,7 +450,7 @@ def add_article(request):
         title = request.POST.get("title")
         content = request.POST.get("content")
         category_id = request.POST.get("category")  # get方法即可获取radio的值
-        tagId_list = request.REQUEST.getlist("tag")  # getlist方法获取checkbox值
+        tagId_list = request.POST.getlist("tag")  # getlist方法获取checkbox值
         soup = BeautifulSoup(content, "html.parser")
         desc = soup.text[0:150] + '...'
         user = request.user
@@ -462,13 +462,9 @@ def add_article(request):
         try:
             article_obj = models.Article.objects.create(title=title, desc=desc, user=user, category_id=category_id)
             models.ArticleDetail.objects.create(content=str(soup), article=article_obj)
-            print(type(article_obj))
-            for tagId in tag_list:
-                print(type(tagId))
-                # article_obj.tags.add(tagId)
-                # article_obj.save()
-                models.ArticleToTag.objects.create(article=article_obj, tag=tagId)
-            return render(request, "backend/article_success.html", {"article": article_obj})
+            for tagId in tagId_list:
+                models.ArticleToTag.objects.create(article=article_obj, tag_id=tagId)
+            return render(request, "backend/article_success.html", {"msg":"文章成功创建","article": article_obj})
         except Exception as e:
             return render(request, "backend/add_article.html", {"result": 0})
     return render(request, "backend/add_article.html", {"category_list": category_list, "tag_list": tag_list})
@@ -494,16 +490,53 @@ def article_delete(request):
 
 
 def article_edit(request):
-    blog = request.user.blog
-    category_list = models.Category.objects.filter(blog=blog)
-    id = request.GET.get("id")
-    category_id = models.Article.objects.filter(pk=id).first().category
-    article_detail_obj = models.ArticleDetail.objects.filter(article_id=id).first()
-    return render(request, "backend/article_edit.html",
-                  {"article_detail_obj": article_detail_obj,
-                   "category_list": category_list,
-                   "category_id": category_id}
-                  )
+    global edit_article_id
+    if request.method == "GET":
+        blog = request.user.blog
+        category_list = models.Category.objects.filter(blog=blog)
+        tag_list = models.Tag.objects.filter(blog=blog)
+        id = request.GET.get("id")
+        edit_article_id = id
+        category_id = models.Article.objects.filter(pk=id).first().category
+        article_detail_obj = models.ArticleDetail.objects.filter(article_id=id).first()
+        tagID_list = models.ArticleToTag.objects.filter(article_id=id).values("tag_id")
+        tagIDs = []
+        for tagID in tagID_list:
+            tagIDs.append(tagID["tag_id"])
+        print(tagIDs)
+        return render(request, "backend/article_edit.html",
+                      {"article_detail_obj": article_detail_obj,
+                       "category_list": category_list,
+                       "category_id": category_id,
+                       "tag_list": tag_list,
+                       "tagIDs": tagIDs}
+                      )
+    else:
+        title = request.POST.get("title")
+        content = request.POST.get("content")
+        category_id = request.POST.get("category")  # get方法即可获取radio的值
+        tagId_list = request.POST.getlist("tag")  # getlist方法获取checkbox值
+        soup = BeautifulSoup(content, "html.parser")
+        desc = soup.text[0:150] + '...'
+        # 防止xss攻击，删除非法标签
+        for tag in soup.find_all():
+            print(tag.name)
+            if tag.name in ["script", "link"]:
+                tag.decompose()
+        try:
+            print("--------------------")
+            models.Article.objects.filter(nid=edit_article_id).update(title=title, desc=desc, category_id=category_id)
+            models.ArticleDetail.objects.filter(article_id=edit_article_id).update(content=str(soup))
+            print("---------------------")
+            models.ArticleToTag.objects.filter(article_id=edit_article_id).delete()
+            article_obj=models.Article.objects.filter(nid=edit_article_id).first()
+            print(article_obj)
+            for tagId in tagId_list:
+                models.ArticleToTag.objects.create(article_id=edit_article_id, tag_id=tagId)
+            return render(request, "backend/article_success.html", {"msg": "文章已成功修改","article": article_obj })
+        except Exception as e:
+            print(e)
+            return HttpResponse("404")
 
 
 #####################！文章管理功能##############

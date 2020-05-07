@@ -8,16 +8,17 @@
                     <div class="panel panel-default">
                         <div class="page-header"><h3>编辑文章</h3></div>
                         <div class="panel-body">
-                            <form method="post" action="/blog/backend/add_article/">
+                            <form method="post" action="/blog/backend/article_edit/">
                                 {% csrf_token %}
                                 <div class="form-group">
                                     <label class="control-label">文章标题</label>
-                                    <input class="form-control" name="title" value="{{ article_detail_obj.article.title}}">
+                                    <input class="form-control" name="title"
+                                           value="{{ article_detail_obj.article.title }}">
                                 </div>
                                 <div class="form-group">
                                     <p>内容</p>
                                     <textarea id="editor_id" class="form-control" name="content" cols="80"
-                                              rows="20">{{article_detail_obj.content}}你好</textarea>
+                                              rows="20">{{ article_detail_obj.content }}你好</textarea>
                                 </div>
                                 <div class="form-group">
                                     <div class="panel panel-success">
@@ -28,6 +29,20 @@
                                                     <input type="radio" name="category" id="{{ category.nid }}"
                                                            {% if category_id.pk == category.nid %}checked{% endif %}
                                                            value="{{ category.nid }}">{{ category.title }}
+                                                </label>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="panel panel-info">
+                                        <div class="panel-heading">个人标签（可多选）</div>
+                                        <div class="panel-body">
+                                            {% for tag in tag_list %}
+                                                <label class="checkbox-inline">
+                                                    <input type="checkbox" name="tag" id="{{ tag.nid }}"
+                                                            {% if tag.nid in tagIDs %} checked{% endif %}
+                                                           value="{{ tag.nid }}">{{ tag.title }}
                                                 </label>
                                             {% endfor %}
                                         </div>
