@@ -8,20 +8,31 @@
     <link rel="stylesheet" href="/static/bootstrap-3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/mystyle.css">
     <link href="https://cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.css" rel="stylesheet">
+    <style>
+        .navbar-brand {
+            float: left;
+            height: 59px;
+            padding: 0px 0px;
+            font-size: 18px;
+            line-height: 20px;
+        }
+    </style>
 </head>
 <body class="bgbody">
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+            <button tpe="buttoyn" class="navbar-toggle collapsed" data-toggle="collapse"
                     data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">The Blog</a>
+            <a class="navbar-brand" href="#">
+                <img src="/static/image/logo.png" alt="Brand">
+            </a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -53,26 +64,86 @@
     </div><!-- /.container-fluid -->
 </nav>
 {#主页面开始#}
-<div class="container">
+<div class="container-fluid">
     <div class="roW">
         <div class="col-md-2">
-            <div class="panel panel-primary">
-                <div class="panel-heading">左侧广告栏一</div>
-                <div class="panel-body">
-                    Panel content
+            <div class="panel panel-default">
+                <div class="panel-body" style="padding: 0px">
+                    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                        <!-- Indicators -->
+                        <ol class="carousel-indicators">
+                            <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+                            <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+                            <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+                        </ol>
+                        <!-- Wrapper for slides -->
+                        <div class="carousel-inner" role="listbox">
+                            <div class="item active">
+                                <img src="/static/image/ad1.png" alt="...">
+                            </div>
+                            <div class="item">
+                                <img src="/static/image/ad2.png" alt="...">
+                            </div>
+                            <div class="item">
+                                <img src="/static/image/ad4.png" alt="...">
+                            </div>
+                        </div>
+                        <!-- Controls -->
+                        <a class="left carousel-control" href="#carousel-example-generic" role="button"
+                           data-slide="prev">
+                            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="right carousel-control" href="#carousel-example-generic" role="button"
+                           data-slide="next">
+                            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
                 </div>
             </div>
-            <div class="panel panel-info">
-                <div class="panel-heading">左侧广告栏二</div>
-                <div class="panel-body">
-                    Panel content
+            <div class="panel panel-default">
+                <div class="panel-body" style="padding: 0px">
+                     <div id="carousel-example-generic_1" class="carousel slide" data-ride="carousel">
+                        <!-- Indicators -->
+                        <ol class="carousel-indicators">
+                            <li data-target="#carousel-example-generic_1" data-slide-to="0" class="active"></li>
+                            <li data-target="#carousel-example-generic_1" data-slide-to="1"></li>
+                            <li data-target="#carousel-example-generic_1" data-slide-to="2"></li>
+                        </ol>
+                        <!-- Wrapper for slides -->
+                        <div class="carousel-inner" role="listbox">
+                            <div class="item active">
+                                <img src="/static/image/ad3.png" alt="...">
+                            </div>
+                            <div class="item">
+                                <img src="/static/image/ad5.png" alt="...">
+                            </div>
+                            <div class="item">
+                                <img src="/static/image/ad6.png" alt="...">
+                            </div>
+                        </div>
+                        <!-- Controls -->
+                        <a class="left carousel-control" href="#carousel-example-generic_1" role="button"
+                           data-slide="prev">
+                            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="right carousel-control" href="#carousel-example-generic_1" role="button"
+                           data-slide="next">
+                            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
                 </div>
             </div>
             <div class="panel panel-default">
                 <div class="panel-heading">推荐文章排行</div>
                 <div class="panel-body">
                     {% for article in article_top %}
-                        <p><a href="/blog/{{ article.user.username }}/article/{{ article.pk }}/">{{ forloop.counter }}、{{ article.title }}</a></p>
+                        <p>
+                            <a href="/blog/{{ article.user.username }}/article/{{ article.pk }}/">{{ forloop.counter }}、{{ article.title }}</a>
+                        </p>
                     {% endfor %}
                 </div>
             </div>
@@ -113,16 +184,74 @@
 
         </div>
         <div class="col-md-2">
-            <div class="panel panel-primary">
-                <div class="panel-heading">右侧广告栏一</div>
-                <div class="panel-body">
-                    Panel content
+            <div class="panel panel-default">
+                <div class="panel-body"  style="padding: 0px">
+                     <div id="carousel-example-generic_2" class="carousel slide" data-ride="carousel">
+                        <!-- Indicators -->
+                        <ol class="carousel-indicators">
+                            <li data-target="#carousel-example-generic_2" data-slide-to="0" class="active"></li>
+                            <li data-target="#carousel-example-generic_2" data-slide-to="1"></li>
+                            <li data-target="#carousel-example-generic_2" data-slide-to="2"></li>
+                        </ol>
+                        <!-- Wrapper for slides -->
+                        <div class="carousel-inner" role="listbox">
+                            <div class="item active">
+                                <img src="/static/image/ad9.png" alt="...">
+                            </div>
+                            <div class="item">
+                                <img src="/static/image/ad8.png" alt="...">
+                            </div>
+                            <div class="item">
+                                <img src="/static/image/ad7.png" alt="...">
+                            </div>
+                        </div>
+                        <!-- Controls -->
+                        <a class="left carousel-control" href="#carousel-example-generic_2" role="button"
+                           data-slide="prev">
+                            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="right carousel-control" href="#carousel-example-generic_2" role="button"
+                           data-slide="next">
+                            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
                 </div>
             </div>
-            <div class="panel panel-info">
-                <div class="panel-heading">右侧广告栏二</div>
-                <div class="panel-body">
-                    Panel content
+            <div class="panel panel-default">
+                <div class="panel-body"  style="padding: 0px">
+                     <div id="carousel-example-generic_3" class="carousel slide" data-ride="carousel">
+                        <!-- Indicators -->
+                        <ol class="carousel-indicators">
+                            <li data-target="#carousel-example-generic_3" data-slide-to="0" class="active"></li>
+                            <li data-target="#carousel-example-generic_3" data-slide-to="1"></li>
+                            <li data-target="#carousel-example-generic_3" data-slide-to="2"></li>
+                        </ol>
+                        <!-- Wrapper for slides -->
+                        <div class="carousel-inner" role="listbox">
+                            <div class="item active">
+                                <img src="/static/image/ad10.png" alt="...">
+                            </div>
+                            <div class="item">
+                                <img src="/static/image/ad11.png" alt="...">
+                            </div>
+                            <div class="item">
+                                <img src="/static/image/ad12.png" alt="...">
+                            </div>
+                        </div>
+                        <!-- Controls -->
+                        <a class="left carousel-control" href="#carousel-example-generic_3" role="button"
+                           data-slide="prev">
+                            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="right carousel-control" href="#carousel-example-generic_3" role="button"
+                           data-slide="next">
+                            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

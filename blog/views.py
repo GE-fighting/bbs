@@ -492,12 +492,17 @@ def article_delete(request):
         ret["status"] = 0
     return JsonResponse(ret)
 
-
+# 编辑文章方法
 def article_edit(request):
+    # 如果是GET请求
     if request.method == "GET":
+        # 得到用户博客表对象
         blog = request.user.blog
+        #得到该博客下分类信息
         category_list = models.Category.objects.filter(blog=blog)
+        # 得到该博客下标签信息
         tag_list = models.Tag.objects.filter(blog=blog)
+        # 得到文章ID
         id = request.GET.get("id")
         category_id = models.Article.objects.filter(pk=id).first().category
         article_detail_obj = models.ArticleDetail.objects.filter(article_id=id).first()
@@ -505,7 +510,6 @@ def article_edit(request):
         tagIDs = []
         for tagID in tagID_list:
             tagIDs.append(tagID["tag_id"])
-        print(tagIDs)
         return render(request, "backend/article_edit.html",
                       {"article_detail_obj": article_detail_obj,
                        "category_list": category_list,
@@ -536,7 +540,7 @@ def article_edit(request):
             return render(request, "backend/article_success.html", {"msg": "文章已成功修改", "article": article_obj})
         except Exception as e:
             print(e)
-            return HttpResponse("404")
+            return render(request,"404.html")
 
 
 #####################！文章管理功能##############

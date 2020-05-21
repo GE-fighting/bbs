@@ -62,23 +62,31 @@ def found_pwd(request):
             return JsonResponse(ret)
 
 def rem_user(request):
+    # 定义返回字典对象
     ret = {"status": 0, "msg": "记住密码成功"}
+    # 获取前端传来的数据
     username = request.POST.get("username")
     password = request.POST.get("password")
     saveFlag = request.POST.get("saveFlag")
+    # 验证用户名密码是否正确
     user = auth.authenticate(username=username, password=password)
+    #获取HttpResponse响应
     response = HttpResponse()
-    if user:
-        if saveFlag == "true":
+    # 对验证结果进行判断
+    if user:    #用户名密码正确
+        if saveFlag == "true": #记住密码已勾选
+            # 给response响应添加cookie
             response.set_signed_cookie('login', username + ',' + password, salt='hello', max_age=24 * 3600 * 7)
+            #将返回对象json序列化后作为响应内容
             response.content = json.dumps(ret)
+            # 返回响应
             return response
-        else:
+        else:#不记住密码
+            # 重置返回字典对象
             ret["status"] = 1
             ret["msg"] = "不记住密码成功"
-            print(type(ret))
-            print(type(json.dumps(ret)))
             response.content = json.dumps(ret)
+            # 响应删除响应的cookie
             response.delete_cookie("login")
             return response
     else:
