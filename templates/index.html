@@ -16,6 +16,14 @@
             font-size: 18px;
             line-height: 20px;
         }
+        #recommend_article p a{
+            color: #2B2E33;
+        }
+         #recommend_article p a:hover{
+            color: #f60;
+            text-decoration: none;
+        }
+
     </style>
 </head>
 <body class="bgbody">
@@ -137,7 +145,7 @@
                     </div>
                 </div>
             </div>
-            <div class="panel panel-default">
+            <div class="panel panel-default" id="recommend_article">
                 <div class="panel-heading">推荐文章排行</div>
                 <div class="panel-body">
                     {% for article in article_top %}
