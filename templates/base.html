@@ -79,9 +79,9 @@
     <ul class="nav nav-pills pull-right">
         <li role="presentation"><a href="/index/">博客园</a></li>
         <li role="presentation"><a href="/blog/{{ user.username }}/">首页</a></li>
-        <li role="presentation"><a href="/blog/backend/add_article/">新文章</a></li>
+        <li role="presentation"><a href="javascript:void(0)" id="new_article_a">新文章</a></li>
         <li role="presentation"><a href="#">联系我们</a></li>
-        <li role="presentation"><a href="/blog/backend/article_list/">管理</a></li>
+        <li role="presentation"><a href="javascript:void(0)" id="manage_a">管理</a></li>
     </ul>
 </div>
 
@@ -285,6 +285,21 @@
 
             }
         })
+    })
+    //点击新文章和管理判断是否登录
+    $("#new_article_a").click(function () {
+
+        if("{{ request.user.username }}"!="")
+            location.href="/blog/backend/add_article/";
+        else
+             location.href="/login/";
+    })
+     $("#manage_a").click(function () {
+
+        if("{{ request.user.username }}"!="")
+            location.href="/blog/backend/article_list/";
+        else
+             location.href="/login/";
     })
 </script>
 <script>
